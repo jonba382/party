@@ -1,287 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bäckström — Nätverkskaraoke 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --neon-cyan: #00ff41;
-    --neon-purple: #ffe000;
-    --neon-green: #00ff41;
-    --night-blue: #050d1a;
-    --deep-navy: #000800;
-    --win95-gray: #0d1a0d;
-    --win95-dark: #1a3d1a;
-    --win95-darker: #004400;
-    --win95-light: #00aa00;
-    --win95-blue: #003300;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--night-blue) url('f44be5ad-2b08-467b-ac08-a666fe1b7e8d.png') center top / cover no-repeat fixed;
-    color: var(--win95-gray);
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-    cursor: default;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(5,13,26,0.45) 0%, rgba(5,13,26,0.55) 100%), repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none;
-    z-index: 1000;
-  }
-
-  .laser-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; z-index: 0; }
-  .laser { position: absolute; top: 20%; width: 2px; height: 60vh; transform-origin: top center; opacity: 0.3; }
-  .laser:nth-child(1) { left: 20%; background: linear-gradient(180deg, var(--neon-cyan), transparent); transform: rotate(-30deg); animation: laserpulse 3s ease-in-out infinite; }
-  .laser:nth-child(2) { left: 35%; background: linear-gradient(180deg, var(--neon-green), transparent); transform: rotate(-15deg); animation: laserpulse 3.5s ease-in-out infinite 0.5s; }
-  .laser:nth-child(3) { left: 50%; background: linear-gradient(180deg, var(--neon-purple), transparent); transform: rotate(5deg); animation: laserpulse 2.8s ease-in-out infinite 1s; }
-  .laser:nth-child(4) { left: 65%; background: linear-gradient(180deg, var(--neon-cyan), transparent); transform: rotate(20deg); animation: laserpulse 4s ease-in-out infinite 0.3s; }
-  .laser:nth-child(5) { left: 80%; background: linear-gradient(180deg, var(--neon-green), transparent); transform: rotate(35deg); animation: laserpulse 3.2s ease-in-out infinite 0.8s; }
-  @keyframes laserpulse { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.45; } }
-
-  .disco-ball {
-    position: fixed; top: -40px; left: 50%; transform: translateX(-50%);
-    width: 80px; height: 80px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #ffffff, #aaaaaa 40%, #555555 80%, #222222);
-    box-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 60px rgba(0,245,255,0.2);
-    animation: discorotate 8s linear infinite; z-index: 2;
-  }
-  .disco-string { position: fixed; top: 0; left: 50%; width: 2px; height: 40px; background: rgba(192,192,192,0.5); z-index: 2; }
-  @keyframes discorotate { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
-
-  .desktop {
-    position: relative; z-index: 10;
-    min-height: 100vh;
-    padding: 100vh 20px 80px;
-    display: flex; flex-direction: column; align-items: center; gap: 24px;
-  }
-
-  /* Hero */
-  .neon-sign {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    text-align: center;
-    z-index: 100;
-    padding: 8px 0 6px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
-    pointer-events: none;
-  }
-  .neon-sign h1 {
-    font-family: 'VT323', monospace;
-    font-size: clamp(28px, 5vw, 52px);
-    color: #fff;
-    text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #00ff41, 0 0 42px #ffe000, 0 0 82px #ffe000;
-    animation: flicker 5s infinite; letter-spacing: 4px;
-  }
-  .neon-sign .subtitle {
-    font-family: 'VT323', monospace; font-size: clamp(18px, 3vw, 28px);
-    color: var(--neon-cyan);
-    text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
-    letter-spacing: 6px; text-transform: uppercase; margin-top: 4px;
-  }
-  @keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #00ff41, 0 0 42px #ffe000, 0 0 82px #ffe000; }
-    20%, 24%, 55% { text-shadow: none; color: rgba(255,255,255,0.6); }
-  }
-
-  /* Layout row */
-  .content-row {
-    display: flex; gap: 16px; width: 100%; max-width: 920px; align-items: flex-start;
-  }
-  .content-main { flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
-  .content-sidebar { width: 190px; flex-shrink: 0; }
-
-  /* Win95 window */
-  .win95-window {
-    width: 100%;
-    border: 2px solid;
-    border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
-    background: var(--win95-gray);
-    box-shadow: 2px 2px 0 var(--win95-darker);
-  }
-  .win95-titlebar {
-    background: var(--win95-blue); padding: 4px 6px;
-    display: flex; align-items: center; justify-content: space-between; user-select: none;
-  }
-  .win95-titlebar .title { font-family: 'VT323', monospace; font-size: 16px; color: #00ff41; text-shadow: 0 0 6px #00ff41; display: flex; align-items: center; gap: 6px; }
-  .win95-controls { display: flex; gap: 2px; }
-  .win95-btn {
-    width: 16px; height: 14px; background: var(--win95-gray);
-    border: 1px solid; border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
-    font-size: 9px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-family: 'VT323', monospace; color: #000;
-  }
-  .win95-content { padding: 14px; }
-
-  /* Event info */
-  .event-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .info-field {
-    background: #000800; border: 2px solid;
-    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
-    padding: 6px 8px;
-  }
-  .info-field label { display: block; font-size: 11px; color: #ffe000; font-family: 'VT323', monospace; margin-bottom: 2px; text-shadow: 0 0 4px #ffe000; }
-  .info-field span { font-size: 13px; color: #00ff41; font-family: 'Share Tech Mono', monospace; }
-  .info-field.full { grid-column: 1 / -1; }
-
-  /* Programme */
-  .programme {
-    background: var(--deep-navy); border: 2px solid;
-    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
-    padding: 10px 12px; margin-bottom: 12px;
-  }
-  .programme-title { font-family: 'VT323', monospace; font-size: 14px; color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); margin-bottom: 8px; }
-  .programme-item { display: flex; gap: 12px; padding: 4px 0; border-bottom: 1px solid rgba(0,245,255,0.1); font-size: 12px; }
-  .programme-item:last-child { border-bottom: none; }
-  .prog-time { color: var(--neon-green); min-width: 50px; font-family: 'VT323', monospace; font-size: 15px; }
-  .prog-desc { color: var(--win95-gray); }
-
-  /* Easter eggs */
-  .easter-eggs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-  .egg {
-    font-size: 10px; color: #00ff41; border: 1px solid #004400;
-    padding: 2px 6px; background: #0d1a0d; cursor: help; position: relative;
-  }
-  .egg:hover { background: #003300; color: #00ff41; text-shadow: 0 0 4px #00ff41; }
-  .egg::after {
-    content: attr(data-tip); position: absolute; bottom: 100%; left: 0;
-    background: #003300; color: #00ff41; font-size: 10px; padding: 4px 8px;
-    white-space: nowrap; display: none; border: 1px solid var(--win95-light); z-index: 100;
-  }
-  .egg:hover::after { display: block; }
-
-  /* Progress */
-  .neon-progress { height: 4px; background: rgba(0,245,255,0.1); border: 1px solid rgba(0,245,255,0.2); margin: 8px 0; overflow: hidden; }
-  .neon-progress-fill { height: 100%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); box-shadow: 0 0 8px var(--neon-cyan); animation: progressscan 2s ease-in-out infinite; }
-  @keyframes progressscan { 0% { width: 0%; opacity: 1; } 70% { width: 100%; opacity: 1; } 100% { width: 100%; opacity: 0; } }
-
-  /* RSVP */
-  .win95-form { display: flex; flex-direction: column; gap: 10px; }
-  .form-row { display: flex; align-items: center; gap: 8px; }
-  .form-row label { font-family: 'VT323', monospace; font-size: 15px; color: #00ff41; min-width: 140px; text-shadow: 0 0 4px #00ff41; }
-  .win95-input, .win95-select, .win95-textarea {
-    flex: 1; background: #000800; border: 2px solid;
-    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
-    padding: 4px 6px; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #00ff41; outline: none;
-  }
-  .win95-input:focus, .win95-select:focus, .win95-textarea:focus { outline: 1px dotted #000; outline-offset: -3px; }
-  .win95-textarea { resize: vertical; min-height: 60px; }
-  .radio-group { display: flex; gap: 16px; flex: 1; }
-  .radio-label { display: flex; align-items: center; gap: 4px; font-family: 'VT323', monospace; font-size: 15px; color: #00ff41; cursor: pointer; }
-  .form-divider { height: 2px; background: linear-gradient(90deg, var(--win95-darker), var(--win95-light)); margin: 4px 0; }
-  .win95-submit {
-    background: var(--win95-gray); border: 2px solid;
-    border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
-    padding: 6px 24px; font-family: 'VT323', monospace; font-size: 18px; color: #00ff41;
-    cursor: pointer; letter-spacing: 1px; box-shadow: 1px 1px 0 #004400 inset; text-shadow: 0 0 4px #00ff41;
-  }
-  .win95-submit:hover { background: #004400; color: #00ff41; text-shadow: 0 0 8px #00ff41; }
-  .win95-submit:active { border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker); box-shadow: none; }
-
-  /* Guest list sidebar */
-  .guestlist-window { position: sticky; top: 20px; }
-  .guestlist-inner {
-    background: var(--deep-navy); border: 2px solid;
-    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
-    padding: 6px; max-height: 580px; overflow-y: auto;
-  }
-  .guestlist-inner::-webkit-scrollbar { width: 12px; }
-  .guestlist-inner::-webkit-scrollbar-track { background: var(--win95-gray); }
-  .guestlist-inner::-webkit-scrollbar-thumb { background: var(--win95-gray); border: 2px solid; border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light); }
-  .guest-entry { padding: 6px 4px; border-bottom: 1px solid rgba(0,245,255,0.12); }
-  .guest-entry:last-child { border-bottom: none; }
-  .guest-name { color: var(--neon-cyan); font-family: 'VT323', monospace; font-size: 15px; display: block; }
-  .guest-meta { color: #ffe000; font-size: 10px; display: block; margin-top: 1px; }
-  .guest-karaoke { color: var(--neon-green); font-size: 10px; }
-  .guest-count { font-family: 'VT323', monospace; font-size: 12px; color: #ffe000; text-align: right; padding: 6px 4px 2px; border-top: 1px solid #004400; margin-top: 4px; }
-  .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 4px var(--neon-green); animation: livepulse 1.5s ease-in-out infinite; margin-right: 4px; vertical-align: middle; }
-  @keyframes livepulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-  /* Countdown */
-  .countdown-window { width: 100%; max-width: 920px; }
-  .countdown-display {
-    background: var(--deep-navy); border: 2px solid;
-    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
-    padding: 16px; display: flex; justify-content: center; gap: 24px;
-  }
-  .count-unit { text-align: center; }
-  .count-number { font-family: 'VT323', monospace; font-size: 48px; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); display: block; line-height: 1; }
-  .count-label { font-size: 10px; color: var(--win95-dark); letter-spacing: 2px; text-transform: uppercase; }
-  .count-sep { font-family: 'VT323', monospace; font-size: 48px; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); line-height: 1; animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* Dialog */
-  .dialog-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; }
-  .dialog-overlay.active { display: flex; }
-  .win95-dialog { background: #0d1a0d; border: 2px solid; border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light); width: 340px; box-shadow: 4px 4px 0 #000, 0 0 20px #00ff41; }
-  .dialog-content { padding: 20px 16px; display: flex; gap: 16px; align-items: flex-start; }
-  .dialog-icon { font-size: 32px; flex-shrink: 0; }
-  .dialog-text { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #00ff41; line-height: 1.6; }
-  .dialog-text strong { font-family: 'VT323', monospace; font-size: 16px; display: block; margin-bottom: 6px; }
-  .dialog-buttons { padding: 0 16px 16px; display: flex; justify-content: center; }
-
-  /* Taskbar */
-  .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 32px; background: var(--win95-gray); border-top: 2px solid var(--win95-light); display: flex; align-items: center; padding: 0 4px; gap: 4px; z-index: 200; }
-  .start-btn { background: var(--win95-gray); border: 2px solid; border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light); padding: 2px 8px; font-family: 'VT323', monospace; font-size: 16px; display: flex; align-items: center; gap: 4px; cursor: pointer; height: 24px; }
-  .taskbar-divider { width: 2px; height: 20px; border-left: 1px solid var(--win95-darker); border-right: 1px solid var(--win95-light); }
-  .taskbar-clock { margin-left: auto; border: 2px solid; border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker); padding: 2px 8px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: #000; height: 24px; display: flex; align-items: center; }
-  .taskbar-task { background: #003300; border: 2px solid; border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker); padding: 2px 10px; font-family: 'VT323', monospace; font-size: 14px; color: white; height: 24px; display: flex; align-items: center; }
-
-  @media (max-width: 640px) {
-    .content-row { flex-direction: column; }
-    .content-sidebar { width: 100%; }
-    .guestlist-window { position: static; }
-    .event-info { grid-template-columns: 1fr; }
-    .form-row { flex-direction: column; align-items: flex-start; }
-    .win95-input, .win95-select, .win95-textarea { width: 100%; }
-  }
-
-  /* Winamp visualizer */
-  .winamp-bar {
-    margin-top: 10px;
-    border: 2px solid;
-    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
-    background: #000;
-    padding: 4px;
-  }
-  .winamp-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 4px;
-  }
-  .winamp-label {
-    font-family: 'VT323', monospace; font-size: 13px; color: var(--neon-green);
-    text-shadow: 0 0 4px var(--neon-green); letter-spacing: 2px;
-  }
-  .winamp-track {
-    font-family: 'VT323', monospace; font-size: 12px; color: var(--neon-cyan);
-    overflow: hidden; white-space: nowrap; max-width: 60%;
-    text-shadow: 0 0 4px var(--neon-cyan);
-  }
-  .winamp-canvas-wrap { position: relative; height: 48px; }
-  canvas#visualizer { display: block; width: 100%; height: 48px; image-rendering: pixelated; }
-  .winamp-upload {
-    margin-top: 4px; display: flex; gap: 6px; align-items: center;
-  }
-  .winamp-upload label {
-    background: #0d1a0d; border: 2px solid;
-    border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
-    font-family: 'VT323', monospace; font-size: 13px; color: #00ff41;
-    padding: 2px 8px; cursor: pointer; text-shadow: 0 0 4px #00ff41;
-  }
-  .winamp-upload label:hover { background: #003300; color: #00ff41; }
-  .winamp-upload label:active { border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker); }
-  #audioFile { display: none; }
-  .winamp-status { font-family: 'VT323', monospace; font-size: 12px; color: #ffe000; }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -295,13 +19,68 @@
 <div class="desktop">
 
   <div class="neon-sign">
-    <h1>Bäckström</h1>
-    <div class="subtitle">Nätverkskaraoke &bull; Snittar &bull; Dans</div>
+    <h1>INFLYTTNING hos BÄCKSTRÖMS</h1>
+    <div class="subtitle">Nätverk &bull;Karaoke &bull; Snittar &bull; Dans</div>
   </div>
 
-  <!-- Main row: info+form left, guestlist right -->
+  <!-- Three-column row: info left | event+rsvp center | guestlist right -->
   <div class="content-row">
 
+    <!-- Left panel: practical party info -->
+    <div class="content-left">
+      <div class="win95-window info-window">
+        <div class="win95-titlebar">
+          <div class="title"><span>ℹ️</span> praktisk_info.exe</div>
+          <div class="win95-controls"><div class="win95-btn">_</div><div class="win95-btn">□</div><div class="win95-btn">✕</div></div>
+        </div>
+        <div class="win95-content">
+
+ <div class="info-section">
+            <div class="info-section-title">// VÅR IDE</div>
+            <div class="info-section-body">Vi bjuder in en drös av de människor vi träffat på sedan vi flyttade till Västerås och ett gäng gamla vänner, 
+		håller tummarna för att så många som möjligt kommer och anpassar formatet för festen efter hur många anmälningar vi lyckas dra in. </div>
+          </div>
+
+<div class="info-section">
+  <div class="info-section-body">
+    <strong style="font-size: 1.2em;">1-10 Personer</strong> Familjärt och förmodligen en middag. Det goda samtalet och de goda smakerna.<br>
+    <strong style="font-size: 1.2em;">11-20 Personer</strong> Här lägger vi till Karaoke, perfekt för att bryta isen och bygga stämning. Middag är fortfarande möjlig.<br>
+    <strong style="font-size: 1.2em;">21-40 Personer</strong> Nu är vi tillräckligt många för att det inte ska kännas ensamt på dansgolvet. Vi fixar snittar och enklare förning.<br>
+    <strong style="font-size: 1.2em;">40-60 Personer</strong> Nu snackar vi! Tilltuggen är mest enkla snacks, men så många roliga människor du kan träffa!<br>
+    <strong style="font-size: 1.2em;">60+ Personer</strong> Nattklubbskänsla i två plan. Karaoke och mingel däruppe, rave i källaren. Vi behöver nog hyra lasrar och rökmaskin. Bar till självkostnadspris.
+  </div>
+</div>
+          <div class="info-section">
+            <div class="info-section-title">// KLÄDKOD</div>
+            <div class="info-section-body">Uppsluppet party, kolla upp Sprezzatura</div>
+          </div>
+
+        
+          <div class="info-section">
+            <div class="info-section-title">// PARKERING</div>
+            <div class="info-section-body">Lämna bilen hemma, det kommer inte finnas plats att parkera på Geijersgatan för alla.</div>
+          </div>
+
+          <div class="info-section">
+            <div class="info-section-title">// TA MED</div>
+            <div class="info-section-body">Vi fixar öl och vin, vill du ha något spektakulärt att bjuda dina nya vänner på tar du med det. <br>Snittar &amp; tilltugg fixas av värdfamiljen.</div>
+          </div>
+
+          <div class="info-section">
+            <div class="info-section-title">// KONTAKT</div>
+            <div class="info-section-body">Jon-Erik &amp; Heléne <br>0735-119108</div>
+          </div>
+
+          <div class="info-section">
+            <div class="info-section-title">// ÖVRIGT</div>
+            <div class="info-section-body">Vill dina barn följa med och är OK att vara på en fest med vuxa så är de välkomna, men målgruppen är vuxna och vi kommer inte barnanpassa</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: event info + RSVP form -->
     <div class="content-main">
 
       <!-- Event info -->
@@ -314,17 +93,17 @@
           <div class="event-info">
             <div class="info-field"><label>DATUM</label><span>19 september 2026</span></div>
             <div class="info-field"><label>START</label><span>18:00 — dörrarna öppnar</span></div>
-            <div class="info-field full"><label>PLATS</label><span>Geijersvägen 2, Västerås</span></div>
-            <div class="info-field full"><label>FORMAT</label><span>Nätverkskaraoke med snittar och dans — tidig topp, för den med energi kvar fortsätter kvällen på stan</span></div>
+            <div class="info-field full"><label>PLATS</label><span>Geijersgatan 2, Västerås</span></div>
+            <div class="info-field full"><label>FORMAT</label><span>Beroende på antalet anmälda, se vänsterpanel</span></div>
           </div>
 
           <div class="programme">
             <div class="programme-title">// SCHEMA.EXE</div>
             <div class="programme-item"><span class="prog-time">18:00</span><span class="prog-desc">Dörrarna öppnar — välkommen in</span></div>
-            <div class="programme-item"><span class="prog-time">18:30</span><span class="prog-desc">Snittar & nätverkande — mingel i full gång</span></div>
+            <div class="programme-item"><span class="prog-time">18:30</span><span class="prog-desc">Snittar &amp; nätverkande — mingel i full gång</span></div>
             <div class="programme-item"><span class="prog-time">19:30</span><span class="prog-desc">Karaoke-session öppnar (helt valfritt!)</span></div>
             <div class="programme-item"><span class="prog-time">21:00</span><span class="prog-desc">Dansgolvet öppnar</span></div>
-            <div class="programme-item"><span class="prog-time">00:00</span><span class="prog-desc">De med energi kvar fortsätter ner till stan</span></div>
+            <div class="programme-item"><span class="prog-time">23:00</span><span class="prog-desc">De med energi kvar fortsätter ner till stan</span></div>
           </div>
 
           <div style="margin-bottom:8px; font-size:11px; color: var(--win95-darker); font-family: 'VT323', monospace;">// GÄSTLISTA REPRESENTERAR:</div>
@@ -401,7 +180,7 @@
 
     </div><!-- /content-main -->
 
-    <!-- Sidebar: guest list -->
+    <!-- Right sidebar: guest list -->
     <div class="content-sidebar">
       <div class="win95-window guestlist-window">
         <div class="win95-titlebar">
@@ -412,8 +191,7 @@
           <div style="font-size:10px; color: #00ff41; font-family:'VT323',monospace; margin-bottom:6px; text-shadow: 0 0 4px #00ff41;">
             <span class="live-dot"></span>LIVE — uppdateras löpande
           </div>
-          <div class="guestlist-inner" id="guestList">
-          </div>
+          <div class="guestlist-inner" id="guestList"></div>
           <div class="guest-count" id="guestCountLine"></div>
         </div>
       </div>
@@ -421,7 +199,7 @@
 
   </div><!-- /content-row -->
 
-  <!-- Countdown at bottom -->
+  <!-- Countdown -->
   <div class="win95-window countdown-window">
     <div class="win95-titlebar">
       <div class="title"><span>⏰</span> nedräkning.exe</div>
@@ -437,7 +215,7 @@
         <span class="count-sep">:</span>
         <div class="count-unit"><span class="count-number" id="seconds">--</span><span class="count-label">sekunder</span></div>
       </div>
-    <div class="winamp-bar">
+      <div class="winamp-bar">
         <div class="winamp-header">
           <span class="winamp-label">▶ WINAMP 2.95</span>
           <span class="winamp-track" id="trackName">--- ladda en låt ---</span>
@@ -491,457 +269,8 @@
   </div>
 </div>
 
-<script>
-function updateCountdown() {
-  const target = new Date('2026-09-19T18:00:00');
-  const now = new Date();
-  const diff = target - now;
-  if (diff <= 0) {
-    ['days','hours','minutes','seconds'].forEach(id => document.getElementById(id).textContent = '00');
-    return;
-  }
-  document.getElementById('days').textContent = String(Math.floor(diff / 86400000)).padStart(2,'0');
-  document.getElementById('hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
-  document.getElementById('minutes').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
-  document.getElementById('seconds').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
-}
-
-function updateClock() {
-  const now = new Date();
-  document.getElementById('tbclock').textContent =
-    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-}
-
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgF_bPKcVhcRbNtDYSyPMgwi6J5Fx62vBF6IG13M0EPOFT8Xj6N_XhGBbDOHkXgHX5/exec';
-
-function submitRSVP() {
-  const name = document.getElementById('name').value.trim();
-  if (!name) { alert('Ange ditt namn!'); return; }
-  const attending = document.querySelector('input[name="attending"]:checked').value;
-  const karaokeEl = document.querySelector('input[name="karaoke"]:checked');
-  const karaoke = karaokeEl ? karaokeEl.value : 'nej';
-  const guests = document.getElementById('guests').value;
-  const allergies = document.getElementById('allergies').value.trim();
-  const song = document.getElementById('song').value.trim();
-
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message') ? document.getElementById('message').value.trim() : '';
-
-  const btn = document.querySelector('#rsvpForm .win95-submit');
-  if (btn) { btn.textContent = 'Skickar…'; btn.disabled = true; }
-
-  // Skicka som form-data – fungerar med no-cors utan preflight
-  const params = new URLSearchParams({ name, email, attending, karaoke, guests, allergies, song, message });
-
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: params
-  })
-  .then(() => {
-    document.getElementById('successDialog').classList.add('active');
-    setTimeout(pollGuests, 2000);
-  })
-  .catch(() => {
-    alert('Något gick fel vid skickning. Försök igen!');
-    if (btn) { btn.textContent = 'OK — Skicka anmälan ↵'; btn.disabled = false; }
-  });
-}
-
-function closeDialog() {
-  document.getElementById('successDialog').classList.remove('active');
-  // Återställ formuläret så fler kan anmäla sig
-  const form = document.getElementById('rsvpForm');
-  form.style.opacity = '1';
-  form.style.pointerEvents = 'auto';
-  form.querySelector('#name').value = '';
-  form.querySelector('#email').value = '';
-  form.querySelector('#allergies').value = '';
-  form.querySelector('#song').value = '';
-  if (form.querySelector('#message')) form.querySelector('#message').value = '';
-  form.querySelector('#guests').selectedIndex = 0;
-  const jaRadio = form.querySelector('input[name="attending"][value="ja"]');
-  if (jaRadio) jaRadio.checked = true;
-  const nejKaraoke = form.querySelector('input[name="karaoke"][value="nej"]');
-  if (nejKaraoke) nejKaraoke.checked = true;
-  const btn = form.querySelector('.win95-submit');
-  if (btn) { btn.textContent = 'OK — Skicka anmälan ↵'; btn.disabled = false; }
-}
-
-function pollGuests() {
-  const status = document.getElementById('syncStatus');
-  if (status) status.textContent = '⟳ Synkar…';
-  const script = document.createElement('script');
-  script.onerror = function() {
-    if (status) status.textContent = '✗ Synk misslyckades — kontrollera Apps Script';
-    if (script.parentNode) script.parentNode.removeChild(script);
-  };
-  script.src = SCRIPT_URL + '?callback=handleGuests&t=' + Date.now();
-  console.log('[poll] Hämtar:', script.src);
-  document.body.appendChild(script);
-  setTimeout(() => { if (script.parentNode) script.parentNode.removeChild(script); }, 6000);
-}
-
-window.handleGuests = function(data) {
-  console.log('[handleGuests] Svar:', JSON.stringify(data));
-  const status = document.getElementById('syncStatus');
-  const now = new Date();
-  const ts = String(now.getHours()).padStart(2,'0') + ':' +
-             String(now.getMinutes()).padStart(2,'0') + ':' +
-             String(now.getSeconds()).padStart(2,'0');
-  if (status) status.textContent = '\u2713 Senast synkad: ' + ts;
-
-  if (!data || !Array.isArray(data.guests)) {
-    console.warn('[handleGuests] Oväntad struktur:', data);
-    return;
-  }
-  const list = document.getElementById('guestList');
-  list.innerHTML = '';
-  let totalPersons = 0;
-  data.guests.forEach(g => {
-    if (String(g.attending).toLowerCase() === 'nej') return;
-    const entry = document.createElement('div');
-    entry.className = 'guest-entry';
-    const num = parseInt(g.guests) || 1;
-    totalPersons += num;
-    const guestCount = num > 1 ? num + ' pers' : '1 pers';
-    const karaokeText = String(g.karaoke).toLowerCase() === 'ja'
-      ? `<span class="guest-karaoke">🎤 ${g.song ? g.song : 'Sjunger'}</span>`
-      : '<span style="color:#ffe000;font-size:10px;">👏 Hejar</span>';
-    const travolta = `<svg width="10" height="14" viewBox="0 0 10 14" style="display:inline-block;vertical-align:middle;margin-right:2px;image-rendering:pixelated" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="0" width="4" height="3" fill="#00ff41"/><rect x="3" y="3" width="4" height="4" fill="#00ff41"/><rect x="7" y="2" width="2" height="2" fill="#00ff41"/><rect x="9" y="1" width="1" height="1" fill="#00ff41"/><rect x="1" y="5" width="2" height="2" fill="#00ff41"/><rect x="0" y="7" width="1" height="1" fill="#00ff41"/><rect x="3" y="7" width="2" height="4" fill="#00ff41"/><rect x="5" y="7" width="2" height="4" fill="#00ff41"/><rect x="2" y="11" width="2" height="2" fill="#00ff41"/><rect x="6" y="11" width="2" height="2" fill="#00ff41"/></svg>`;
-    const danceText = g.allergies ? `<span style="color:#00ff41;font-size:10px;">${travolta}${g.allergies}</span>` : '';
-    entry.innerHTML = `<span class="guest-name">${g.name}</span><span class="guest-meta">${guestCount}</span>${danceText}${karaokeText}`;
-    list.appendChild(entry);
-  });
-  const count = list.querySelectorAll('.guest-entry').length;
-  document.getElementById('guestCountLine').textContent = count + ' anmälda \u2022 ' + totalPersons + ' pers';
-};
-
-pollGuests();
-setInterval(pollGuests, 30000);
-
-updateCountdown();
-updateClock();
-setInterval(updateCountdown, 1000);
-setInterval(updateClock, 10000);
-
-// Winamp visualizer — scrolling waveform
-const canvas = document.getElementById('visualizer');
-const ctx2 = canvas.getContext('2d');
-let audioCtx, analyser, source, animFrame;
-let demoMode = true;
-
-function resizeCanvas() { canvas.width = canvas.offsetWidth; }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// ── TECHNO SEQUENCER ─────────────────────────────────────────────────
-const BPM  = 132;
-const spb  = 60 / BPM;
-const sp16 = spb / 4;
-
-let kickE = 0, bassE = 0, hatE = 0, claveE = 0, synthE = 0;
-let phase16 = 0, fracT = 0, lastTS = null;
-let totalBeats = 0; // global beat counter for melody phrase
-
-const kickGrid  = new Set([0, 4, 8, 12]);
-const hatGrid   = new Set([2, 6, 10, 14]);
-const claveGrid = new Set([3, 7, 11]);
-const bassGrid  = new Set([0, 2, 3, 4, 6, 8, 10, 11, 12, 14]);
-
-// ── SCROLLING WAVEFORM BUFFER ─────────────────────────────────────────
-// We keep a pixel-wide history buffer and shift it left each frame
-let scrollBuf = null; // created on first draw
-
-function getWaveformSample() {
-  // Composite signal from all active instruments — gives realistic waveform shape
-  const t = fracT; // 0-1 position within current 16th
-  let sig = 0;
-  // Kick: sine sweep downward
-  sig += kickE  * Math.sin(2 * Math.PI * (160 - kickE * 120) * t * sp16) * 0.7;
-  // Bass: sawtooth-ish via summed harmonics, filtered (low freq)
-  sig += bassE  * (Math.sin(2 * Math.PI * 4 * t) * 0.5 +
-                   Math.sin(2 * Math.PI * 8 * t) * 0.25 +
-                   Math.sin(2 * Math.PI * 12 * t) * 0.12) * 0.5;
-  // Hat: noise burst
-  sig += hatE   * (Math.random() * 2 - 1) * 0.25;
-  // Clave: short mid-freq ping
-  sig += claveE * Math.sin(2 * Math.PI * 30 * t) * 0.3;
-  // Synth: melodic sine
-  sig += synthE * Math.sin(2 * Math.PI * 16 * t + Math.PI * fracT) * 0.45;
-  return Math.max(-1, Math.min(1, sig));
-}
-
-function drawDemo(timestamp) {
-  if (!demoMode) return;
-  if (!lastTS) lastTS = timestamp;
-  const dt = Math.min((timestamp - lastTS) / 1000, 0.05);
-  lastTS = timestamp;
-
-  // Advance sequencer
-  fracT += dt / sp16;
-  while (fracT >= 1) {
-    fracT -= 1;
-    phase16 = (phase16 + 1) % 16;
-    totalBeats++;
-    if (kickGrid.has(phase16))  kickE  = 1.0;
-    if (hatGrid.has(phase16))   hatE   = 0.7;
-    if (claveGrid.has(phase16)) claveE = 0.55;
-    if (bassGrid.has(phase16))  bassE  = Math.min(1.0, bassE + 0.85);
-  }
-
-  // Decay
-  kickE  *= Math.pow(0.001, dt / 0.06);
-  bassE  *= Math.pow(0.001, dt / 0.22);
-  hatE   *= Math.pow(0.001, dt / 0.04);
-  claveE *= Math.pow(0.001, dt / 0.09);
-  synthE *= Math.pow(0.001, dt / 0.38);
-
-  resizeCanvas();
-  const W = canvas.width, H = canvas.height;
-  const mid = Math.floor(H / 2);
-
-  // ── FREQUENCY BAND ENERGIES for bar heights ─────────────────────
-  // Map instrument energies to 5 frequency bands (sub, bass, low-mid, hi-mid, hi)
-  const bands = [
-    Math.min(1, kickE * 0.95 + bassE * 0.1),                          // sub
-    Math.min(1, bassE * 0.85 + kickE * 0.2),                          // bass
-    Math.min(1, claveE * 0.7 + bassE * 0.25 + synthE * 0.15),         // low-mid
-    Math.min(1, synthE * 0.7 + claveE * 0.3),                         // hi-mid
-    Math.min(1, hatE * 0.8 + synthE * 0.2 + 0.02),                    // hi
-  ];
-
-  // ── DRAW ─────────────────────────────────────────────────────────
-  ctx2.fillStyle = '#000a14';
-  ctx2.fillRect(0, 0, W, H);
-
-  const BAR_W = 3, GAP = 2, STEP = BAR_W + GAP;
-  const numBars = Math.floor(W / STEP);
-  const particles = [];
-
-  for (let i = 0; i < numBars; i++) {
-    const norm = i / numBars; // 0 = left (sub), 1 = right (hi)
-
-    // Interpolate across bands
-    const bandPos = norm * (bands.length - 1);
-    const b0 = Math.floor(bandPos), b1 = Math.min(bands.length - 1, b0 + 1);
-    const bf = bandPos - b0;
-    let energy = bands[b0] * (1 - bf) + bands[b1] * bf;
-
-    // Add per-bar shimmer so adjacent bars aren't identical
-    energy += Math.sin(norm * Math.PI * numBars * 0.3 + fracT * 12) * 0.06;
-    energy += Math.random() * 0.025;
-    energy = Math.min(1, Math.max(0, energy));
-
-    const barH = Math.max(2, Math.round(energy * (mid - 3)));
-    const x = i * STEP;
-
-    // ── Color: deep cyan → bright cyan → white at peaks (matches reference)
-    let r, g, b;
-    if (energy < 0.45) {
-      const t2 = energy / 0.45;
-      r = 0; g = Math.round(80 + t2 * 120); b = Math.round(140 + t2 * 80);
-    } else if (energy < 0.78) {
-      const t2 = (energy - 0.45) / 0.33;
-      r = Math.round(t2 * 40); g = Math.round(200 + t2 * 55); b = 220;
-    } else {
-      const t2 = (energy - 0.78) / 0.22;
-      r = Math.round(40 + t2 * 215); g = 255; b = Math.round(220 + t2 * 35);
-    }
-    const col = `rgb(${r},${g},${b})`;
-
-    // ── Upper bar (above center)
-    ctx2.fillStyle = col;
-    ctx2.fillRect(x, mid - barH, BAR_W, barH);
-
-    // ── Lower mirror (below center) — slightly dimmer
-    ctx2.fillStyle = `rgba(${r},${g},${b},0.55)`;
-    ctx2.fillRect(x, mid, BAR_W, barH);
-
-    // ── Glow cap at top of upper bar
-    if (energy > 0.55) {
-      ctx2.fillStyle = `rgba(${r},${g},${b},0.9)`;
-      ctx2.fillRect(x, mid - barH - 1, BAR_W, 2);
-    }
-
-    // ── Spawn particle at very high peaks
-    if (energy > 0.82 && Math.random() < 0.35) {
-      particles.push({ x: x + 1, y: mid - barH - 2 });
-    }
-  }
-
-  // ── Glowing centerline
-  const grad = ctx2.createLinearGradient(0, mid - 1, 0, mid + 2);
-  grad.addColorStop(0, 'rgba(0,220,255,0.0)');
-  grad.addColorStop(0.5, `rgba(0,220,255,${0.25 + kickE * 0.55})`);
-  grad.addColorStop(1, 'rgba(0,220,255,0.0)');
-  ctx2.fillStyle = grad;
-  ctx2.fillRect(0, mid - 1, W, 3);
-
-  // ── Sparkle particles
-  for (const p of particles) {
-    ctx2.fillStyle = `rgba(180,240,255,${0.5 + Math.random() * 0.5})`;
-    ctx2.fillRect(p.x + Math.round((Math.random()-0.5)*6), p.y - Math.round(Math.random()*4), 1, 1);
-  }
-
-  requestAnimationFrame(drawDemo);
-}
-requestAnimationFrame(drawDemo);
-
-// ── WEB AUDIO ENGINE ─────────────────────────────────────────────────
-// Kick + hihat + rolling bass + 32-bar melodic synth phrase (~29 sec)
-let beatAudioCtx = null;
-let beatScheduled = false;
-
-// Melodic synth phrase — 32 bars × 16 steps = 512 steps total (~29s at 132bpm)
-// Notes in D minor pentatonic: D3=146.8, F3=174.6, G3=196, A3=220, C4=261.6, D4=293.7
-// null = rest, number = frequency
-const D3=146.8, F3=174.6, G3=196.0, A3=220.0, C4=261.6, D4=293.7, A2=110.0, F4=349.2;
-// 32-step melodic phrase (2 bars), loops with variation
-const melodyPhrase = [
-  D3,  null, null, F3,   G3,  null, A3,  null,
-  C4,  null, A3,   null, G3,  F3,   null, D3,
-  null, A2,  null, D3,   F3,  null, G3,  null,
-  A3,  C4,   null, A3,   D4,  null, F3,  null
-];
-// Second phrase variation — introduces higher notes after ~15s
-const melodyPhrase2 = [
-  G3,  null, null, A3,   C4,  null, D4,  null,
-  F4,  null, D4,   null, C4,  A3,   null, G3,
-  null, D3,  null, F3,   G3,  null, A3,  C4,
-  D4,  null, C4,   A3,   G3,  null, A3,  null
-];
-
-function startBeat() {
-  if (beatScheduled) return;
-  beatScheduled = true;
-  beatAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  const masterGain = beatAudioCtx.createGain();
-  masterGain.gain.value = 0.13;
-  masterGain.connect(beatAudioCtx.destination);
-
-  const lpf = beatAudioCtx.createBiquadFilter();
-  lpf.type = 'lowpass'; lpf.frequency.value = 7000;
-  lpf.connect(masterGain);
-
-  // Separate reverb-like chain for synth
-  const synthGain = beatAudioCtx.createGain();
-  synthGain.gain.value = 0.18;
-  synthGain.connect(masterGain);
-
-  function playKick(t) {
-    const osc = beatAudioCtx.createOscillator();
-    const g = beatAudioCtx.createGain();
-    osc.connect(g); g.connect(lpf);
-    osc.frequency.setValueAtTime(160, t);
-    osc.frequency.exponentialRampToValueAtTime(40, t + 0.12);
-    g.gain.setValueAtTime(1.0, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-    osc.start(t); osc.stop(t + 0.36);
-  }
-
-  function playHat(t, open) {
-    const len = open ? 0.12 : 0.035;
-    const buf = beatAudioCtx.createBuffer(1, Math.ceil(beatAudioCtx.sampleRate * len), beatAudioCtx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    const src = beatAudioCtx.createBufferSource(); src.buffer = buf;
-    const hpf = beatAudioCtx.createBiquadFilter();
-    hpf.type = 'highpass'; hpf.frequency.value = open ? 7000 : 9500;
-    const g = beatAudioCtx.createGain();
-    src.connect(hpf); hpf.connect(g); g.connect(lpf);
-    g.gain.setValueAtTime(open ? 0.30 : 0.16, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + len);
-    src.start(t); src.stop(t + len + 0.01);
-  }
-
-  function playBass(t, freq) {
-    const osc = beatAudioCtx.createOscillator();
-    osc.type = 'sawtooth';
-    const filt = beatAudioCtx.createBiquadFilter();
-    filt.type = 'lowpass'; filt.frequency.value = 380; filt.Q.value = 4;
-    const g = beatAudioCtx.createGain();
-    osc.connect(filt); filt.connect(g); g.connect(lpf);
-    osc.frequency.value = freq;
-    g.gain.setValueAtTime(0.55, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + sp16 * 0.82);
-    osc.start(t); osc.stop(t + sp16 * 0.85);
-  }
-
-  function playSynth(t, freq) {
-    if (!freq) return;
-    // Detuned dual oscillator for width
-    const osc1 = beatAudioCtx.createOscillator();
-    const osc2 = beatAudioCtx.createOscillator();
-    osc1.type = 'sine'; osc2.type = 'sine';
-    osc1.frequency.value = freq;
-    osc2.frequency.value = freq * 1.005; // slight detune
-    const g = beatAudioCtx.createGain();
-    osc1.connect(g); osc2.connect(g); g.connect(synthGain);
-    // ADSR: soft attack, hold, gentle release
-    const dur = sp16 * 3.2;
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(0.6, t + 0.04);
-    g.gain.setValueAtTime(0.6, t + sp16 * 2);
-    g.gain.linearRampToValueAtTime(0, t + dur);
-    osc1.start(t); osc1.stop(t + dur + 0.05);
-    osc2.start(t); osc2.stop(t + dur + 0.05);
-    // Trigger synthE for visualizer
-    synthE = 0.9;
-  }
-
-  const bassFreqs = [73.42,82.41,87.31,98.00,110.00,87.31,98.00,82.41,
-                     73.42,82.41,87.31,98.00,110.00,87.31,98.00,110.00];
-
-  let barCount = 0;
-  let melodyStep = 0; // global step counter across all bars
-
-  function scheduleBar(startTime) {
-    const usePhrase2 = (barCount >= 8); // switch melody after ~8 bars (~14.5s)
-    for (let step = 0; step < 16; step++) {
-      const t = startTime + step * sp16;
-      if (kickGrid.has(step))  playKick(t);
-      if (hatGrid.has(step))   playHat(t, true);
-      if (step % 2 === 0 && !kickGrid.has(step)) playHat(t, false);
-      if (bassGrid.has(step))  playBass(t, bassFreqs[step]);
-
-      // Melody: play on every other 16th (8th-note feel), skipping beats 1&3
-      if (step % 2 === 0) {
-        const phrase = usePhrase2 ? melodyPhrase2 : melodyPhrase;
-        playSynth(t, phrase[melodyStep % 32]);
-        melodyStep++;
-      }
-    }
-    barCount++;
-  }
-
-  // One loop = 16 bars. Two loops = 32 bars. Fade starts bar 29, done by bar 33.
-  const fadeStartBar = 29;
-  const fadeDuration = spb * 4 * 4; // 4 bars to fade out
-
-  let nextBarTime = beatAudioCtx.currentTime + 0.1;
-  scheduleBar(nextBarTime);
-  nextBarTime += spb * 4;
-
-  const schedInterval = setInterval(() => {
-    if (beatAudioCtx.state === 'suspended') return;
-    if (barCount > 33) { clearInterval(schedInterval); return; }
-
-    scheduleBar(nextBarTime);
-
-    // Trigger fadeout at bar 29
-    if (barCount === fadeStartBar) {
-      masterGain.gain.setValueAtTime(0.13, nextBarTime);
-      masterGain.gain.linearRampToValueAtTime(0, nextBarTime + fadeDuration);
-    }
-
-    nextBarTime += spb * 4;
-  }, spb * 4 * 1000 * 0.75);
-}
-
-document.addEventListener('click',   () => { startBeat(); }, { once: false });
-document.addEventListener('keydown', () => { startBeat(); }, { once: true  });
-</script>
+<script src="js/visualizer.js"></script>
+<script src="js/guestlist.js"></script>
+<script src="js/rsvp.js"></script>
 </body>
 </html>
